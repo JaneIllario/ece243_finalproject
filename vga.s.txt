@@ -1,0 +1,67 @@
+.global _start
+_start:
+
+.equ ADDR_VGA, 0x08000000
+.equ ADDR_CHAR, 0x09000000
+
+.incbin court_gameplay16b.bmp
+.incbin 3-2-tennis-ball-png-picture.bmp
+
+  movia r2,ADDR_VGA
+  /*
+  movia r3, ADDR_CHAR
+  movui r4,0xffff  /* White pixel */
+  movi  r5, 0x41   /* ASCII for 'A' */
+  sthio r4,1032(r2) /* pixel (4,1) is x*2 + y*1024 so (8 + 1024 = 1032) */
+  stbio r5,132(r3) /* character (4,1) is x + y*128 so (4 + 128 = 132) */
+  */
+  
+drawscreen:  
+	movia r5, 10(court_gameplay16b.bmp)
+  
+   #DON'T NEED THIS, IN OUTERmovi r3, 320 /*move x lim*/
+   movi r4, 240 /*move y lim*/
+   
+  outerloop: beq r0, r4, endloop
+  			subi r4, r4, 1
+            movi r3, 320
+
+  innerloop: beq r0, r3, outerloop
+  		sthio r5, 0(r2) /*stw colour r5 into vga addr*/
+        addi r2, r2, 2 /*moves over 2*/
+        subi r3, r3, 4 /*decrease amount of row to go through*/
+
+        br innerloop
+        
+  endloop:
+
+  	beq r0, r0, drawscreen
+    
+	
+drawball:
+
+    movia r6, 10(3-2-tennis-ball-png-picture.bmp)
+    movi r5, 40 /*move y lim*/
+
+    ball_outerloop: beq r0, r5, ball_endloop
+    	subi r5, r5, 1
+    	movi r7, 40
+
+    ball_innerloop: beq r0, r7, ball_outerloop
+    	sthio r7, 0(r2) /*stw colour r5 into vga addr*/
+    	addi r2, r2, 2 /*moves over 2*/
+    	subi r7, r7, 4 /*decrease amount of row to go through*/
+
+    	br ball_innerloop
+
+    ball_endloop:
+
+    	beq r0, r0, drawball
+        
+moveball_right:
+	
+
+moveball_left:
+  
+  		
+	
